@@ -2,6 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    user-select: none;
 }
 
 #container {
@@ -22,8 +23,52 @@
 
 .board {
     grid-row: 2 / 4;
+    display: grid;
+    grid-template: repeat(8, 60px) / repeat(8, 60px);
+    gap: 1px;
+    place-self: center;
 }
 
 #message {
     grid-column: 2 / 4;
+}
+
+.cell {
+    border: 1px solid gray;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: bold;
+    color: red;
+    position: relative;
+}
+
+.ship {
+    cursor: all-scroll;
+    border: 3px solid black;
+    position: absolute;
+    z-index: 1;
+    border-radius: 8px;
+    opacity: 0.7;
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3), 
+               -4px -4px 8px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s;
+}
+
+.dragging {
+    z-index: 5;
+    background-color: rgba(127, 255, 212, 0.4);
+}
+
+.highlight {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.notplaceable {
+    background-color: rgba(255, 85, 85, 0.4);
+}
+
+.ship:hover {
+    transform: scale(0.95);
 }
