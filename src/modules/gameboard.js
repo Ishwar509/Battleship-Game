@@ -6,7 +6,6 @@ class GameBoardHandler {
       this.boardSize = 8;
       this.Ships = generateShips();
       this.board = this.createboard(this.boardSize);
-      this.boardLog = this.createboard(this.boardSize);
       this.placeShipsRandomly();
    }
 
