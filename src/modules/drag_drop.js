@@ -1,24 +1,23 @@
 import { getRandomColor } from './utils';
 import { createShipComponent } from './dom';
-import PlacementHandler from './shipPlacementHandler';
 
 let playerBoard = null;
 let Cells = null;
 const mapper = new Map();
 
-let board = null;
+let boardHandler = null;
 let currShip = null;
 let initialX = null;
 let initialY = null;
 let isdragging = false;
 let startCell = null;
 
-function enableDragDrop(gameboard) {
+function enableDragDrop(player) {
    playerBoard = document.querySelector('.player');
    Cells = document.querySelectorAll('.player .cell');
 
-   board = gameboard.getBoard();
-   initShipComponents(gameboard.getShips());
+   boardHandler = player.gameboardHandler;
+   initShipComponents(boardHandler.getShips());
 
    for (const shipComponent of mapper.keys()) {
       shipComponent.addEventListener('mousedown', handleDragStart);
@@ -69,8 +68,8 @@ function handleDragEnd(e) {
 
       const cell = startCell;
       if (!cell || !isPlaceable(cell, currShip)) {
-         const prevCoords = mapper.get(currShip).coordinates;
-         prevCoords.forEach(([x, y]) => (board[x][y] = mapper.get(currShip)));  
+         const ship = mapper.get(currShip);
+         boardHandler.placeShipAt(ship, ship.coordinates[0], ship.orientation); 
       } else {
          cell.appendChild(currShip);
       }
@@ -83,8 +82,7 @@ function handleDragEnd(e) {
 
 function handleDragging(e) {
    if (isdragging) {
-      const prevCoords = mapper.get(currShip).coordinates;
-      prevCoords.forEach(([x, y]) => (board[x][y] = null));
+      boardHandler.removeShip(mapper.get(currShip));
 
       currShip.style.left = `${e.clientX - initialX}px`;
       currShip.style.top = `${e.clientY - initialY}px`;
@@ -108,7 +106,7 @@ function rotateShip(e) {
          y: 1 - ship.orientation.y
       };
 
-      PlacementHandler.tryToPlace(ship, board, ship.coordinates[0], newdir);
+      boardHandler.placeShipAt(ship, ship.coordinates[0], newdir);
 
       shipComponent.style.width = `${Math.max(
          cellSize,
@@ -147,7 +145,7 @@ function findStartCell() {
 function isPlaceable(cell, shipComponent) {
    const strtCell = [Number(cell.dataset.x), Number(cell.dataset.y)];
    const ship = mapper.get(shipComponent);
-   return PlacementHandler.tryToPlace(ship, board, strtCell, ship.orientation);
+   return boardHandler.placeShipAt(ship, strtCell, ship.orientation);
 }
 
 function highlightCells(cell) {
@@ -181,7 +179,7 @@ function getNearbyCells(cell, length) {
       const ny = strty + i * currDir.y;
 
       const el = document.querySelector(`[data-x="${nx}"][data-y="${ny}"]`);
-      if (el && board[nx][ny] === null) cellList.push(el);
+      if (el && boardHandler.getBoard()[nx][ny] === null) cellList.push(el);
    }
 
    return cellList;

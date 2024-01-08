@@ -2,8 +2,25 @@ import { getRandomColor } from './utils';
 
 const playerBoard = document.querySelector('.player');
 const computerBoard = document.querySelector('.computer');
+const messageContainer = document.querySelector('#message');
 
 const gridSize = 8;
+
+function createBoardDisplay() {
+   createGrid(playerBoard);
+   createGrid(computerBoard);
+}
+
+function createGrid(container) {
+   container.innerHTML = "";
+
+   for (let i = 0; i < gridSize; ++i) {
+      for (let j = 0; j < gridSize; ++j) {
+         const cell = createCell(i, j);
+         container.appendChild(cell);
+      }
+   }
+}
 
 function createCell(i, j) {
    const cell = document.createElement('div');
@@ -12,15 +29,6 @@ function createCell(i, j) {
    cell.dataset.y = j;
 
    return cell;
-}
-
-function createGrid(container) {
-   for (let i = 0; i < gridSize; ++i) {
-      for (let j = 0; j < gridSize; ++j) {
-         const cell = createCell(i, j);
-         container.appendChild(cell);
-      }
-   }
 }
 
 function createShipComponent(ship) {
@@ -43,9 +51,20 @@ function createShipComponent(ship) {
    return shipComponent;
 }
 
-function init() {
-   createGrid(playerBoard);
-   createGrid(computerBoard);
+function markCell({cell, hit}, boardDisplay){
+   const gridCell = boardDisplay.querySelector(`[data-x="${cell[0]}"][data-y="${cell[1]}"]`);
+   
+   if(gridCell.classList.contains('hit')) return null;
+
+   gridCell.classList.add('hit');
+   if(hit) gridCell.classList.add('success');
+   const el = document.createElement('span');
+   el.innerHTML = '&times;'
+   gridCell.prepend(el);
 }
 
-export { init, createShipComponent };
+function showMessage(message){
+   messageContainer.textContent = message;
+}
+
+export { createBoardDisplay, createShipComponent, markCell, showMessage };

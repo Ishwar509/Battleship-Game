@@ -1,8 +1,5 @@
-import {init} from './modules/dom';
-import Player from './modules/player';
-import { enableDragDrop } from './modules/drag_drop';
+import { initializeGame } from "./modules/gameContoller";
+import { initUI } from "./modules/gameUI";
 
-init();
-
-const player = new Player('player');
-enableDragDrop(player.gameboard);
+initUI();
+initializeGame();

@@ -17,38 +17,45 @@ class PlacementHandler {
       strtCell = strtCell || getRandomEmptyCell(board);
       dir = dir || getRandomDirection();
 
-      const prevCoords = ship.coordinates;
+      this.removeShipFromBoard(ship, board);
 
-      prevCoords.forEach(([x, y]) => {
-         board[x][y] = null;
-      });
-
-      const newCoords = this.#getNewCoordinates(ship.length, strtCell, board, dir);
+      const newCoords = this.#getNewCoordinates(
+         ship.length,
+         strtCell,
+         board,
+         dir
+      );
 
       if (newCoords.length < ship.length) {
-         prevCoords.forEach(([x, y]) => (board[x][y] = ship));
+         ship.coordinates.forEach(([x, y]) => (board[x][y] = ship));
          return false;
       }
 
       ship.coordinates = newCoords;
-      newCoords.forEach(([x, y]) => (board[x][y] = ship));
       ship.orientation = dir;
+      newCoords.forEach(([x, y]) => (board[x][y] = ship));
       return true;
    }
 
-   static #getNewCoordinates(length, strtCell, board, dir){
-    const cells = [];
+   static #getNewCoordinates(length, strtCell, board, dir) {
+      const cells = [];
 
-    for (let i = 0; i < length; ++i) {
-       const posX = strtCell[0] + i * dir.x;
-       const posY = strtCell[1] + i * dir.y;
+      for (let i = 0; i < length; ++i) {
+         const posX = strtCell[0] + i * dir.x;
+         const posY = strtCell[1] + i * dir.y;
 
-       if (checkBound([posX, posY], board) && board[posX][posY] === null) {
-          cells.push([posX, posY]);
-       }
-    }
+         if (checkBound([posX, posY], board) && board[posX][posY] === null) {
+            cells.push([posX, posY]);
+         }
+      }
 
-    return cells;
+      return cells;
+   }
+
+   static removeShipFromBoard(ship, board) {
+      ship.coordinates.forEach(([x, y]) => {
+         board[x][y] = null;
+      });
    }
 }
 

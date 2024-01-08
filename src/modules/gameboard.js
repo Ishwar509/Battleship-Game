@@ -1,18 +1,17 @@
 import PlacementHandler from './shipPlacementHandler';
 import { generateShips } from './utils';
 
-class GameBoard {
+class GameBoardHandler {
    constructor() {
       this.boardSize = 8;
       this.Ships = generateShips();
-      this.createboard(this.boardSize);
+      this.board = this.createboard(this.boardSize);
+      this.boardLog = this.createboard(this.boardSize);
       this.placeShipsRandomly();
    }
 
    createboard(size) {
-      this.board = new Array(size)
-         .fill(null)
-         .map(() => new Array(size).fill(null));
+      return new Array(size).fill(null).map(() => new Array(size).fill(null));
    }
 
    placeShipsRandomly() {
@@ -23,16 +22,22 @@ class GameBoard {
       return PlacementHandler.tryToPlace(ship, this.board, strtCell, dir);
    }
 
+   removeShip(ship) {
+      PlacementHandler.removeShipFromBoard(ship, this.board);
+   }
+
    areShipsSunk() {
       return !this.Ships.some((ship) => !ship.isSunk());
    }
 
    receiveAttack([x, y]) {
-      if (this.board[x][y] === null) return false;
+      if (this.board[x][y] === null) {
+         return false;
+      }
 
       const ship = this.board[x][y];
       ship.hit();
-
+      this.board[x][y] = null;
       return true;
    }
 
@@ -40,9 +45,9 @@ class GameBoard {
       return this.Ships;
    }
 
-   getBoard(){
+   getBoard() {
       return this.board;
    }
 }
 
-export default GameBoard;
+export default GameBoardHandler;
